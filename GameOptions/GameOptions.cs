@@ -27,8 +27,7 @@ public class GameOptions : Mod
 
         RConsole.registerCommand("gamemode", "Change the gamemode. Usage: gamemode <mode> (Options: Creative, Easy, Normal, Hardcore)", "gamemode", new Action(SwitchMode));
         RConsole.registerCommand("joinable", "Set whether your friends can join your game or not. Usage: joinable <true|false>", "joinable", new Action(ChangeAllowFriends));
-        RConsole.registerCommand("printLearned", "Get the current list of learned recipes", "printLearned", new Action(PrintLearnedRecipes));
-        RConsole.registerCommand("printBackup", "Get the backup list of learned recipes", "printBackup", new Action(PrintBackup));
+        RConsole.registerCommand("friendlyFire", "Toggles whether Friendly Fire is on or off.", "friendlyFire", new Action(SetFriendlyFire));
         Log("<color=#ffcf01>GameOptions</color> - LOADED");
     }
 
@@ -76,23 +75,18 @@ public class GameOptions : Mod
                 case "creative":
                     SaveLearnedRecipes();
                     GameManager.GameMode = GameMode.Creative;
-                    //ComponentManager<Inventory_ResearchTable>.Value.LearnAllRecipesInstantly();
-                    PrintLearnedRecipes();
                     break;
                 case "easy":
                     GameManager.GameMode = GameMode.Easy;
                     RestoreLearnedRecipes();
-                    PrintLearnedRecipes();
                     break;
                 case "normal":
                     GameManager.GameMode = GameMode.Normal;
                     RestoreLearnedRecipes();
-                    PrintLearnedRecipes();
                     break;
                 case "hardcore":
                     GameManager.GameMode = GameMode.Hardcore;
                     RestoreLearnedRecipes();
-                    PrintLearnedRecipes();
                     break;
             }
             Log($"<color=#ffcf01>GameOptions</color>: Game mode set to <color=#ffcf01>{char.ToUpper(mode[0]) + mode.Substring(1)}</color>.");
@@ -104,10 +98,15 @@ public class GameOptions : Mod
         }
     }
 
+    public void SetFriendlyFire()
+    {
+        GameManager.FriendlyFire = !GameManager.FriendlyFire;
+        Log($"Friendly fire is set to {GameManager.FriendlyFire}");
+    }
+
     public void SaveLearnedRecipes()
     {
-        string researchTableWorldJson = JsonUtility.ToJson(ComponentManager<RGD_ResearchTableWorld>.Value);
-        researchBackup = researchTableWorldJson;
+
     }
 
     public void PrintLearnedRecipes()
@@ -122,7 +121,7 @@ public class GameOptions : Mod
 
     public void RestoreLearnedRecipes()
     {
-        ComponentManager<RGD_ResearchTableWorld>.Value = JsonUtility.FromJson<RGD_ResearchTableWorld>(researchBackup);
+
     }
 
     public void Log(string text)
